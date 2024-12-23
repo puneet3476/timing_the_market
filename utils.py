@@ -46,13 +46,11 @@ def sip_irr(mkt: pd.DataFrame, sip: pd.DataFrame, start: pd.Timestamp, end: pd.T
     sip = pd.merge(sip, mkt, on='date', how='inner')
     sip_portfolio_value = (sip['cashflow'] * sip['r']).sum()
 
-    # print("SIP Portfolio Value: ", sip_portfolio_value)
-
     # Cash inflows to the bank
     dates = []
     cashflows = []
 
-    #TODO: Interest on monthly balance
+    # TODO: Interest on monthly balance
 
     for i in pd.date_range(start=start, end=end, freq='MS'):
         dates.append(i)
