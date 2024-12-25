@@ -1,7 +1,6 @@
 import pandas as pd
-from PIL.ImageChops import offset
 from ta import momentum, trend
-from timing_market.utils import sip_irr
+from utils import calc_irr_and_fpv
 
 
 class BaseStrategy:
@@ -12,12 +11,12 @@ class BaseStrategy:
         self.end = end
         self.amt = amt
 
-    def run(self) -> pd.DataFrame:
+    def calc_cash_inflow(self) -> pd.DataFrame:
         pass
 
-    def irr(self):
-        sip = self.run()
-        return sip_irr(start=self.start, end=self.end, amt=self.amt, mkt=self.mkt, sip=sip)
+    def run(self):
+        sip = self.calc_cash_inflow()
+        return calc_irr_and_fpv(start=self.start, end=self.end, amt=self.amt, mkt=self.mkt, sip=sip)
 
 
 class FixedDateInvest(BaseStrategy):
@@ -25,7 +24,7 @@ class FixedDateInvest(BaseStrategy):
         super().__init__(market, **kwargs)
         self.day = day
 
-    def run(self):
+    def calc_cash_inflow(self):
         self.mkt = self.mkt[self.mkt['date'] >= self.start]
         self.mkt = self.mkt[self.mkt['date'] <= self.end]
 
@@ -39,7 +38,7 @@ class InvestOnLowest(BaseStrategy):
     def __init__(self, market, **kwargs):
         super().__init__(market, **kwargs)
 
-    def run(self):
+    def calc_cash_inflow(self):
         self.mkt = self.mkt[self.mkt['date'] >= self.start]
         self.mkt = self.mkt[self.mkt['date'] <= self.end]
         self.mkt['ym'] = self.mkt['date'].dt.to_period('M')
@@ -57,7 +56,7 @@ class RSI(BaseStrategy):
         self.window = window
         self.low = low
 
-    def run(self):
+    def calc_cash_inflow(self):
         self.mkt = self.mkt[self.mkt['date'] >= self.start]
         self.mkt = self.mkt[self.mkt['date'] <= self.end]
         self.mkt['ym'] = self.mkt['date'].dt.to_period('M')
@@ -87,7 +86,7 @@ class MACD(BaseStrategy):
         self.slow = slow
         self.sign = sign
 
-    def run(self):
+    def calc_cash_inflow(self):
         self.mkt = self.mkt[self.mkt['date'] >= self.start]
         self.mkt = self.mkt[self.mkt['date'] <= self.end]
         self.mkt['ym'] = self.mkt['date'].dt.to_period('M')

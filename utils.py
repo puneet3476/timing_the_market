@@ -33,7 +33,7 @@ def returns(df: pd.DataFrame, end: pd.Timestamp = None) -> pd.DataFrame:
     return df
 
 
-def sip_irr(mkt: pd.DataFrame, sip: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp, amt: int = 100) -> float:
+def calc_irr_and_fpv(mkt: pd.DataFrame, sip: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp, amt: int = 100):
     """
     :param amt: amount of monthly sip
     :param mkt: [date, market]
@@ -60,13 +60,4 @@ def sip_irr(mkt: pd.DataFrame, sip: pd.DataFrame, start: pd.Timestamp, end: pd.T
     dates.append(end)
 
     irr = xirr(dates, cashflows)
-
-    # print("*" * 100)
-    # print("SIPS: ", len(sip))
-    # print("CASHFLOWS: ", len(cashflows))
-    # print("Dates: ", dates)
-    # print("Cashflows: ", cashflows)
-    # print("START: ", start)
-    # print("END: ", end)
-    # print("IRR: ", irr)
-    return irr
+    return [irr, sip_portfolio_value]
